@@ -13,12 +13,11 @@ import org.junit.jupiter.api.Test
 
 
 @MicronautTest
-class BasicTests (
+class BasicServiceTest {
     @Inject
-    private  var service: BasicService,
+    lateinit  var service: BasicService
     @Inject
-    private var repo: GreetingRepository  // the mock from @MockBean
-){
+    lateinit var repo: GreetingRepository  // the mock from @MockBean
 
     @MockBean(GreetingRepository::class)
     fun mockRepo(): GreetingRepository = mockk(relaxed = true)
