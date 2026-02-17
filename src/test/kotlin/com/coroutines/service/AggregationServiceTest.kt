@@ -26,11 +26,14 @@ class AggregationServiceTest {
 
     @Test
     fun `should combine async results`() = runTest {
+        val dataResponse = "Data"
+        val infoResponse = "Info"
+
         coEvery { serviceA.getData() } returns "Data"
         coEvery { serviceB.getInfo() } returns "Info"
 
         val result = service.getCombinedData()
 
-        assertEquals("Combined: Data + Info", result)
+        assertEquals("Combined: $dataResponse + $infoResponse", result)
     }
 }
