@@ -22,14 +22,13 @@ class FbiWantedController(
     }
 
     /**
-     * GET /fbi/highest-reward?page=1
+     * GET /fbi/highest-reward
      */
     @Get("/highest-reward")
     suspend fun getHighestRewardUrl(
-            @QueryValue(defaultValue = "1") page: Int
     ): HighestRewardResponse {
         return HighestRewardResponse(
-                url = service.getHighestRewardUrl(page)
+                url = service.getHighestRewardAcrossAllPages()
         )
     }
 }

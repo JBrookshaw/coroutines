@@ -3,6 +3,8 @@ micronaut:
   application:
     name: coroutines
   serde:
+    deserialization:
+      accept-single-value-as-array: true
     naming:
       strategy: SNAKE_CASE
 

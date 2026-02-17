@@ -3,7 +3,13 @@ package com.coroutines.service
 import com.coroutines.client.FbiWantedClient
 import com.coroutines.client.WantedResponse
 import jakarta.inject.Singleton
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import org.slf4j.LoggerFactory
+import kotlin.math.ceil
 
 @Singleton
 class FbiWantedService(
@@ -35,6 +41,34 @@ class FbiWantedService(
                 }
                 .maxByOrNull { it.first }
                 ?.second
+    }
+
+    suspend fun getHighestRewardAcrossAllPages(): String? = coroutineScope {
+
+        val firstPage = fbiWantedClient.getWantedList(page = 1)
+
+        val pageSize = firstPage.items.size.takeIf { it > 0 } ?: 20
+        val totalPages = ceil(firstPage.total.toDouble() / pageSize).toInt()
+
+        val semaphore = Semaphore(5)
+
+        val deferredPages = (2..totalPages).map { pageNumber ->
+            async {
+                semaphore.withPermit {
+                    fbiWantedClient.getWantedList(page = pageNumber)
+                }
+            }
+        }
+
+        val allResponses = listOf(firstPage) + deferredPages.awaitAll()
+
+        allResponses
+                .mapNotNull { response ->
+                    response.items
+                            .maxByOrNull { extractMaxDollarAmount(it.rewardText) ?: 0L }
+                }
+                .maxByOrNull { extractMaxDollarAmount(it.rewardText) ?: 0L }
+                ?.url
     }
 
     private fun extractMaxDollarAmount(text: String?): Long? {

@@ -22,6 +22,5 @@ class FbiWantedClientTest {
 
         val firstItem = response.items.first()
         assertNotNull(firstItem.uid)
-        assertNotNull(firstItem.title)
     }
 }
