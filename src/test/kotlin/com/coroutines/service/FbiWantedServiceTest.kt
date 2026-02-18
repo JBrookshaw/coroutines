@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class FbiWantedServiceTest {
 
@@ -105,5 +106,19 @@ class FbiWantedServiceTest {
         val result = service.getHighestRewardAcrossAllPages()
 
         assertEquals("highest", result)
+    }
+
+    @Test
+    fun `getHighestRewardAcrossAllPages should throw exception when client getWantedList fails`() = runTest {
+
+        coEvery {
+            client.getWantedList(
+                    any(), any(), any(), any(), any(), any(), any()
+            )
+        } throws RuntimeException("API failure")
+
+        assertThrows<RuntimeException> {
+            service.getHighestRewardAcrossAllPages()
+        }
     }
 }

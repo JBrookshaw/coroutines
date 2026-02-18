@@ -17,7 +17,6 @@ data class WantedResponse(
 
 @Serdeable
 data class WantedItem(
-
         @JsonProperty("url")
         val url: String? = null,
 
