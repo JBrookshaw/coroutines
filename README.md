@@ -1,28 +1,33 @@
-## Micronaut 4.9.4 Documentation
+# coroutines
 
-- [User Guide](https://docs.micronaut.io/4.9.4/guide/index.html)
-- [API Reference](https://docs.micronaut.io/4.9.4/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/4.9.4/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
----
+Micronaut + Kotlin sample service demonstrating coroutine-based APIs, fan-out aggregation, and streaming endpoints.
 
-- [Shadow Gradle Plugin](https://gradleup.com/shadow/)
-- [Micronaut Gradle Plugin documentation](https://micronaut-projects.github.io/micronaut-gradle-plugin/latest/)
-- [GraalVM Gradle Plugin documentation](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)
-## Feature ksp documentation
+## Requirements
 
-- [Micronaut Kotlin Symbol Processing (KSP) documentation](https://docs.micronaut.io/latest/guide/#kotlin)
+- JDK 21+
+- Gradle wrapper (included)
 
-- [https://kotlinlang.org/docs/ksp-overview.html](https://kotlinlang.org/docs/ksp-overview.html)
+## Run locally
 
+```bash
+./gradlew run
+```
 
-## Feature micronaut-aot documentation
+App starts on `http://localhost:8080` by default.
 
-- [Micronaut AOT documentation](https://micronaut-projects.github.io/micronaut-aot/latest/guide/)
+## Test
 
+```bash
+./gradlew test
+```
 
-## Feature serialization-jackson documentation
+## Useful endpoints
 
-- [Micronaut Serialization Jackson Core documentation](https://micronaut-projects.github.io/micronaut-serialization/latest/guide/)
+- `GET /aggregate` – fan-out to multiple services and combine the result
+- `GET /fbi/list?page=1` – fetch FBI wanted list (proxied)
+- `GET /fbi/highest-reward` – compute highest reward URL across pages
 
+## Notes
 
+- FBI API base URL is configured in `src/main/resources/application.yml`.
+- JSON naming strategy is snake_case via Micronaut Serde config.

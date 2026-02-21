@@ -7,10 +7,12 @@ plugins {
     id("io.micronaut.aot") version "4.5.4"
 }
 
-version = "0.1"
 group = "com.coroutines"
+version = "0.1"
 
-val kotlinVersion=project.properties.get("kotlinVersion")
+val kotlinVersion = project.properties["kotlinVersion"] as String
+val coroutinesVersion = "1.8.1"
+
 repositories {
     mavenCentral()
 }
@@ -18,31 +20,34 @@ repositories {
 dependencies {
     ksp("io.micronaut:micronaut-http-validation")
     ksp("io.micronaut.serde:micronaut-serde-processor")
+
     implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("io.micronaut:micronaut-http-client")
-    //compileOnly("io.micronaut:micronaut-http-client")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+
     runtimeOnly("ch.qos.logback:logback-classic")
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
     runtimeOnly("org.yaml:snakeyaml")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+
     testImplementation("io.micronaut:micronaut-http-client")
     testImplementation("io.mockk:mockk:1.13.12")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 }
-
 
 application {
     mainClass = "com.coroutines.ApplicationKt"
 }
-java {
-    sourceCompatibility = JavaVersion.toVersion("21")
-}
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
 
 graalvmNative.toolchainDetection = false
 
@@ -54,8 +59,6 @@ micronaut {
         annotations("com.coroutines.*")
     }
     aot {
-        // Please review carefully the optimizations enabled below
-        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
         optimizeServiceLoading = false
         convertYamlToJava = false
         precomputeOperations = true
@@ -67,9 +70,10 @@ micronaut {
     }
 }
 
+tasks.named<Test>("test") {
+    useJUnitPlatform()
+}
 
 tasks.named<io.micronaut.gradle.docker.NativeImageDockerfile>("dockerfileNative") {
     jdkVersion = "21"
 }
-
-
