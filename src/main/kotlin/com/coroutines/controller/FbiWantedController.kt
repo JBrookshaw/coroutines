@@ -7,28 +7,13 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.QueryValue
 
 @Controller("/fbi")
-class FbiWantedController(
-        private val service: FbiWantedService
-) {
+class FbiWantedController(private val service: FbiWantedService) {
 
-    /**
-     * GET /fbi/list?page=1
-     */
     @Get("/list")
-    suspend fun getWantedList(
-            @QueryValue(defaultValue = "1") page: Int
-    ): WantedResponse {
-        return service.getWantedList(page)
-    }
+    suspend fun getWantedList(@QueryValue(defaultValue = "1") page: Int): WantedResponse =
+        service.getWantedList(page)
 
-    /**
-     * GET /fbi/highest-reward
-     */
     @Get("/highest-reward")
-    suspend fun getHighestRewardUrl(
-    ): HighestRewardResponse {
-        return HighestRewardResponse(
-                url = service.getHighestRewardAcrossAllPages()
-        )
-    }
+    suspend fun getHighestRewardUrl(): HighestRewardResponse =
+        HighestRewardResponse(url = service.getHighestRewardAcrossAllPages())
 }
